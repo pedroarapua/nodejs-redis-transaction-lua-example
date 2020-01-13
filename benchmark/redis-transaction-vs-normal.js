@@ -30,7 +30,10 @@ async function runRedisBenchmarkIncr(time) {
     }, time);
     let n = 0;
     while (!done) {
-        let result = await redisClient.incrAsync("countIncr");
+        let multi = redisClient.multi();
+        multi.getAsync("countIncr");
+        multi.incrAsync("countIncr");
+        result = await multi.execAsync();
         console.log(result);
         n++;
     }
